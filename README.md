@@ -75,9 +75,9 @@ Check the outputs:
 
 ---
 
-##Author
+## Author
 
-Harriet .J. Vazhappilly
+Harriet J. Vazhappilly
 
 GitHub: github.com/harrietjvazhappilly
 
