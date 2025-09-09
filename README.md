@@ -37,3 +37,25 @@ An automated invoice processing solution leveraging **Python**, **OCR**, and **R
 ```bash
 git clone https://github.com/harrietjvazhappilly/invoice-processing-bot.git
 cd invoice-processing-bot
+
+## Demo Output
+
+### invoices.csv
+
+| Vendor        | Date       | Amount | Source        |
+|---------------|-----------|--------|---------------|
+| ABC Supplies  | 09/09/2025 | 150.0  | invoice1.txt  |
+| XYZ Traders   | 08/09/2025 | 200.0  | invoice2.txt  |
+
+### daily_report.csv
+
+| Vendor        | Total_Amount | Invoice_Count |
+|---------------|--------------|---------------|
+| ABC Supplies  | 150.0        | 1             |
+| XYZ Traders   | 200.0        | 1             |
+
+### Screenshot of Output
+
+![Sample Output](images/dailyreport_csv.png)
+![Sample Output](images/invoices_csv.png)
+
