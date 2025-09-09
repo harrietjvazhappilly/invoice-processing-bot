@@ -79,11 +79,10 @@ Check the outputs:
 
 Harriet J. Vazhappilly
 
-GitHub: github.com/harrietjvazhappilly
+GitHub: https://github.com/harrietjvazhappilly
 
-LinkedIn: linkedin.com/in/harrietjvazhappilly
-
-Email: harrietjvazhappilly@example.com
+Email: harrietjvazhappilly@gmail.com
+       24ct245@mgits.ac.in
 
 ---
 
