@@ -53,9 +53,6 @@ cd invoice-processing-bot
 |---------------|--------------|---------------|
 | ABC Supplies  | 150.0        | 1             |
 | XYZ Traders   | 200.0        | 1             |
+exit
 
-### Screenshot of Output
-
-![Sample Output](images/dailyreport_csv.png)
-![Sample Output](images/invoices_csv.png)
 
