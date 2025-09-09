@@ -1,4 +1,4 @@
-# Invoice Processing Bot (RPA + OCR)
+-# Invoice Processing Bot (RPA + OCR)
 
 An automated invoice processing solution leveraging **Python**, **OCR**, and **RPA principles** to extract key invoice data and generate structured reports efficiently. Designed to reduce manual effort, minimize errors, and provide actionable insights from invoices.
 
@@ -37,6 +37,59 @@ An automated invoice processing solution leveraging **Python**, **OCR**, and **R
 
 `git clone https://github.com/harrietjvazhappilly/invoice-processing-bot.git
 cd invoice-processing-bot`
---
+
+2.Install dependencies:
+`pip install -r requirements.txt`
+
+---
+
+###Usage
+
+Convert PDFs to text (OCR):
+   `python src/pdf_to_txt.py`
+
+Parse OCR text and generate reports:
+   `python src/parse_ocr_invoices.py`
+
+Check the outputs:
+
+`reports/invoices.csv` → Detailed invoice data
+
+`reports/daily_report.csv` → Summary per vendor
+
+## Demo Output
+
+### invoices.csv 
+
+|   Vendor      |   Date    | Amount | Source       |
+|---------------|-----------|--------|--------------| 
+| ABC Supplies  | 09/09/2025| 150.0  | invoice1.txt | 
+| XYZ Traders   | 08/09/2025| 200.0  | invoice2.txt | 
+
+### daily_report.csv
+
+|   Vendor     | Total_Amount | Invoice_Count |
+|--------------|--------------|---------------|
+| ABC Supplies |   150.0      |       1       |
+| XYZ Traders  |   200.0      |       1       |
+
+---
+
+###Author
+
+Harriet .J. Vazhappilly
+
+GitHub: github.com/harrietjvazhappilly
+
+LinkedIn: linkedin.com/in/harrietjvazhappilly
+
+Email: harrietjvazhappilly@example.com
+
+---
+
+
+
+
+
 
 
