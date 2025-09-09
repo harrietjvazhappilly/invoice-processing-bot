@@ -26,7 +26,7 @@ An automated invoice processing solution leveraging **Python**, **OCR**, and **R
 
 ### Prerequisites
 
-- Python 3.x  
+- Python 3.13
 - [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) installed and added to PATH  
 - [Poppler](http://blog.alivate.com.au/poppler-windows/) installed and added to PATH  
 
