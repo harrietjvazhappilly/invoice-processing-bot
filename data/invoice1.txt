@@ -1,0 +1,6 @@
+
+---- Page 1 ----
+Vendor: ABC Supplies
+Invoice Date: 22/08/2025
+Total: $245.60
+

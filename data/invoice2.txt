@@ -1,0 +1,6 @@
+
+---- Page 1 ----
+Vendor: XYZ Traders
+Invoice Date: 23/08/2025
+Total: $1120.00
+
