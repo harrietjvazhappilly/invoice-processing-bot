@@ -1,4 +1,4 @@
--# Invoice Processing Bot (RPA + OCR)
+## Invoice Processing Bot (RPA + OCR)
 
 An automated invoice processing solution leveraging **Python**, **OCR**, and **RPA principles** to extract key invoice data and generate structured reports efficiently. Designed to reduce manual effort, minimize errors, and provide actionable insights from invoices.
 
@@ -59,14 +59,14 @@ Check the outputs:
 
 ## Demo Output
 
-### invoices.csv 
+## invoices.csv 
 
 |   Vendor      |   Date    | Amount | Source       |
 |---------------|-----------|--------|--------------| 
 | ABC Supplies  | 09/09/2025| 150.0  | invoice1.txt | 
 | XYZ Traders   | 08/09/2025| 200.0  | invoice2.txt | 
 
-### daily_report.csv
+## daily_report.csv
 
 |   Vendor     | Total_Amount | Invoice_Count |
 |--------------|--------------|---------------|
@@ -75,7 +75,7 @@ Check the outputs:
 
 ---
 
-###Author
+##Author
 
 Harriet .J. Vazhappilly
 
