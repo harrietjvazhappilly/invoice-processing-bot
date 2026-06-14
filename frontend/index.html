@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Processing Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .upload-section {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            background: #f8f9ff;
+        }
+        
+        input[type="file"] {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        #uploadStatus {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            min-height: 20px;
+        }
+        
+        #uploadStatus.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        #uploadStatus.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        #results h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        #resultData {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+            max-height: 300px;
+        }
+        
+        #loadingSpinner {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📄 Invoice Processing Bot</h1>
+        
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <p style="color: #666; margin-bottom: 15px;">Upload a PDF or TXT invoice</p>
+            <input type="file" id="fileInput" accept=".pdf,.txt" />
+            <button onclick="uploadFile()">Process Invoice</button>
+            <div id="uploadStatus"></div>
+        </div>
+        
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" style="display:none;">
+            ⏳ Processing... Please wait (first request may take 30-60 sec)
+        </div>
+        
+        <!-- Results -->
+        <div id="results" style="display:none;">
+            <h2>✓ Extracted Data</h2>
+            <pre id="resultData"></pre>
+            <button onclick="downloadReport()">📥 Download Report</button>
+        </div>
+    </div>
+
+    <script>
+        // Detect API URL based on environment
+        const API_BASE_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:8000'
+            : 'https://invoice-bot-backend-xyz.onrender.com'; // Update with YOUR Render URL
+        
+        console.log('API URL:', API_BASE_URL);
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showStatus('Please select a file', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showLoading(true);
+            showStatus('', '');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/process-invoice/`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Upload failed');
+                }
+
+                const data = await response.json();
+                displayResults(data);
+                showStatus('✓ File processed successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus(`✗ Error: ${error.message}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('uploadStatus');
+            status.textContent = message;
+            status.className = type;
+        }
+
+        function showLoading(show) {
+            document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
+        }
+
+        function displayResults(data) {
+            const resultDiv = document.getElementById('results');
+            const resultData = document.getElementById('resultData');
+            
+            resultData.textContent = JSON.stringify(data.data, null, 2);
+            resultDiv.style.display = 'block';
+        }
+
+        async function downloadReport() {
+            try {
+                showLoading(true);
+                const response = await fetch(`${API_BASE_URL}/download-report/invoices.csv`);
+                
+                if (!response.ok) throw new Error('Download failed');
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'invoices.csv';
+                a.click();
+                window.URL.revokeObjectURL(url);
+                
+                showStatus('✓ Report downloaded!', 'success');
+            } catch (error) {
+                showStatus(`✗ Error: ${error.message}`, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+    </script>
+</body>
+</html>
