@@ -9,7 +9,6 @@ venv/
 backend/uploads/*
 backend/reports/*
 *.pdf
-*.txt
 *.csv
 
 # IDEs
