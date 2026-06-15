@@ -8,7 +8,7 @@ date_pattern = re.compile(r"(Invoice Date|Date):\s*([\d/-]+)")
 amount_pattern = re.compile(r"(Total|Amount):\s*\$?([\d.]+)")
 
 
-def parse_single_invoice(file_path: str):
+def extract_invoice_data(file_path: str):
     file = Path(file_path)
 
     with open(file, "r", encoding="utf-8") as f:
