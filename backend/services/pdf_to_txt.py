@@ -2,7 +2,7 @@ from pathlib import Path
 import pytesseract
 from pdf2image import convert_from_path
 
-def convert_pdf_to_text(pdf_path: str):
+def pdf_to_text(pdf_path: str):
 
     pdf_path = Path(pdf_path)
     txt_output = pdf_path.with_suffix(".txt")
