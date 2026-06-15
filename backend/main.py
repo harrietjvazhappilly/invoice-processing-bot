@@ -7,8 +7,8 @@ from pathlib import Path
 import logging
 
 # Import your services
-from services.parse_invoices import extract_invoice_data
-from services.pdf_to_txt import pdf_to_text
+from .services.parse_invoices import extract_invoice_data
+from .services.pdf_to_txt import pdf_to_text
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
