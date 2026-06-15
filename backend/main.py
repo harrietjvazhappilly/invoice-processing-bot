@@ -1,13 +1,13 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse
-import os
+from fastapi.responses import FileResponse
 import shutil
 from pathlib import Path
 import logging
+import pandas as pd
 
 # Import your services
-from .services.parse_invoices import extract_invoice_data
+from .services.parse_invoices import extract_invoice_data, generate_reports
 from .services.pdf_to_txt import pdf_to_text
 
 # Configure logging
@@ -31,10 +31,26 @@ app.add_middleware(
 )
 
 # Directories
-UPLOAD_DIR = Path("uploads")
-REPORTS_DIR = Path("reports")
+BASE_DIR = Path(__file__).resolve().parent
+UPLOAD_DIR = BASE_DIR / "uploads"
+REPORTS_DIR = BASE_DIR / "reports"
 UPLOAD_DIR.mkdir(exist_ok=True)
 REPORTS_DIR.mkdir(exist_ok=True)
+
+
+def load_existing_records():
+    csv_path = REPORTS_DIR / "invoices.csv"
+    if not csv_path.exists():
+        return []
+
+    try:
+        return pd.read_csv(csv_path).to_dict(orient="records")
+    except Exception:
+        logger.warning("Could not load existing invoice report. Starting with empty records.")
+        return []
+
+
+records = load_existing_records()
 
 # ============ ENDPOINTS ============
 
@@ -59,24 +75,25 @@ async def process_invoice(file: UploadFile = File(...)):
         logger.info(f"File uploaded: {file.filename}")
         
         # Process based on type
-        text_content = ""
         if file.content_type == "application/pdf":
             try:
-                text_content = pdf_to_text(str(file_path))
+                text_file = pdf_to_text(str(file_path))
             except Exception as e:
                 logger.error(f"PDF error: {str(e)}")
                 raise HTTPException(status_code=500, detail=f"PDF processing failed: {str(e)}")
         else:
-            with open(file_path, "r") as f:
-                text_content = f.read()
+            text_file = str(file_path)
         
-        # Extract data
-        invoice_data = extract_invoice_data(text_content)
+        # Extract data and update reports
+        invoice_data = extract_invoice_data(text_file)
+        records.append(invoice_data)
+        report_paths = generate_reports(records, str(REPORTS_DIR))
         
         return {
             "status": "success",
             "filename": file.filename,
-            "data": invoice_data
+            "data": invoice_data,
+            "reports": report_paths
         }
     
     except HTTPException:
@@ -93,7 +110,6 @@ async def get_invoices():
         if not csv_path.exists():
             return {"invoices": [], "message": "No invoices yet"}
         
-        import pandas as pd
         df = pd.read_csv(csv_path)
         return {"status": "success", "invoices": df.to_dict(orient="records")}
     except Exception as e:
@@ -103,15 +119,21 @@ async def get_invoices():
 async def download_report(report_name: str):
     """Download CSV report"""
     try:
+        allowed_reports = {"invoices.csv", "daily_report.csv"}
+        if report_name not in allowed_reports:
+            raise HTTPException(status_code=400, detail="Invalid report name")
+
         report_path = REPORTS_DIR / report_name
         if not report_path.exists():
             raise HTTPException(status_code=404, detail="Report not found")
         
         return FileResponse(
-            path=report_path,
+            path=str(report_path),
             filename=report_name,
             media_type="text/csv"
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
